@@ -273,8 +273,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
     <span class="kicker">Acceso al ejemplo</span>
     <h3 id="gate-t">Suscríbete y míralo completo.</h3>
     <p>Déjanos tu correo y recibe el boletín de tecnología empresarial de MINA: ejemplos reales y aprendizajes para hacer crecer tu negocio. Sin spam.</p>
-    <form name="newsletter" method="POST" data-netlify="true" action="sistema.html">
-      <input type="hidden" name="form-name" value="newsletter">
+    <form id="gate-form" name="newsletter">
       <input type="email" name="email" placeholder="tu@correo.com" required>
       <button type="submit" class="btn btn--primary" style="width:100%;justify-content:center">Ver el sistema</button>
     </form>
@@ -314,7 +313,7 @@ window.addEventListener('load',function(){
       {label:'Competencia',data:[4.5,4.5,4.5,4.4,4.4,4.4],borderColor:'#9FB0C8',borderDash:[5,4],fill:false,tension:.4,pointRadius:0,borderWidth:2}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{boxWidth:8,font:{size:10},color:'#5B6675'}}},scales:{y:{min:4,max:4.6,grid:gx,ticks:{color:'#5B6675',font:{size:10}}},x:{grid:{display:false},ticks:tk}}}});
 });
-(function(){var g=document.getElementById('gate');if(!g)return;var c=document.getElementById('gate-close');document.querySelectorAll('[data-gate]').forEach(function(b){b.addEventListener('click',function(e){e.preventDefault();g.classList.add('open');});});if(c)c.addEventListener('click',function(){g.classList.remove('open');});g.addEventListener('click',function(e){if(e.target===g)g.classList.remove('open');});document.addEventListener('keydown',function(e){if(e.key==='Escape')g.classList.remove('open');});})();
+(function(){var g=document.getElementById('gate');if(!g)return;var c=document.getElementById('gate-close'),f=document.getElementById('gate-form');document.querySelectorAll('[data-gate]').forEach(function(b){b.addEventListener('click',function(e){e.preventDefault();g.classList.add('open');});});if(c)c.addEventListener('click',function(){g.classList.remove('open');});if(f)f.addEventListener('submit',function(e){e.preventDefault();var email=f.querySelector('input[name="email"]');if(email&&email.value){localStorage.setItem('mina_newsletter_email',email.value);}window.location.href='sistema.html';});g.addEventListener('click',function(e){if(e.target===g)g.classList.remove('open');});document.addEventListener('keydown',function(e){if(e.key==='Escape')g.classList.remove('open');});})();
 </script>
 </body>
 </html>
