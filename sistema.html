@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RADAR · Un sistema real de MINA</title>
+<meta name="description" content="Ejemplo real de un RADAR de inteligencia competitiva de MINA: análisis de una cafetería de especialidad en Avenida Juárez, Puebla, con 1,609 reseñas y 16 competidores, solo con datos públicos.">
+<meta name="theme-color" content="#0B1538">
+<link rel="icon" href="mina-symbol-negative.png">
+<link rel="stylesheet" href="theme.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--brand-blue:var(--azul);--navy:var(--subsuelo);--cobalt:var(--cobalto);--amber:var(--oro);--amber-d:var(--oro-oscuro);--paper:var(--blanco);--surface:var(--papel-2);--soft-blue:var(--papel-2);--tx:var(--texto);--mut:var(--muted);--line:var(--linea);--red:var(--fuga);--maxw:1080px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Manrope',system-ui,sans-serif;color:var(--tx);background:var(--papel);line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.disp{font-family:'Manrope',sans-serif;font-weight:700;letter-spacing:-.02em;color:var(--navy);line-height:1.15}
+.mono,.cifra{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+a{color:inherit}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+.narrow{max-width:780px}
+.skip{position:absolute;left:-999px}.skip:focus{left:12px;top:12px;background:var(--amber);color:var(--navy);padding:8px 14px;border-radius:8px;z-index:200}
+:focus-visible{outline:3px solid var(--cobalt);outline-offset:2px;border-radius:4px}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--cobalt);font-weight:700}
+.kicker::before{content:"";width:8px;height:8px;background:var(--amber);transform:rotate(45deg)}
+.btn{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;padding:12px 20px;border-radius:10px;border:1.5px solid var(--navy);background:transparent;color:var(--navy);cursor:pointer;text-decoration:none;transition:all .18s}
+.btn:hover{background:var(--brand-blue);color:var(--blanco)}
+.btn--primary{background:var(--azul);border-color:var(--azul);color:var(--blanco)}
+.btn--primary:hover{background:var(--subsuelo);border-color:var(--subsuelo);color:var(--blanco)}
+header.nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.88);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Manrope';font-weight:800;font-size:19px;color:var(--brand-blue);text-decoration:none}
+.brand .mk{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center}
+.brand .mk img{width:28px;height:28px;display:block}
+.nav-links{display:flex;align-items:center;gap:6px}
+.nav-links a.lnk{color:var(--mut);text-decoration:none;font-size:14px;font-weight:600;padding:7px 11px;border-radius:8px}
+.nav-links a.lnk:hover{color:var(--navy)}.nav-links a.lnk.active{color:var(--cobalt)}
+.nav-toggle{display:none;background:transparent;border:1px solid var(--line);border-radius:8px;width:40px;height:40px;align-items:center;justify-content:center;cursor:pointer;color:var(--navy)}
+.head{position:relative;overflow:hidden;background:var(--navy);color:var(--blanco);padding:56px 0 48px}
+.head::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 82% 18%,rgba(255,255,255,.13),transparent 28%),linear-gradient(135deg,rgba(255,255,255,.10),transparent 46%);pointer-events:none}
+.head .wrap{position:relative;z-index:1}
+.head h1{color:var(--blanco);font-size:34px;margin:14px 0 8px}
+.head p{color:#AFC0D8;font-size:15px;max-width:560px}
+.head strong{color:var(--blanco)}
+.badge{display:inline-block;background:rgba(255,255,255,.1);color:var(--amber);font-size:12px;padding:4px 11px;border-radius:20px;border:1px solid rgba(255,255,255,.2)}
+section{padding:44px 0;border-top:1px solid var(--line)}
+section h2{font-size:25px;margin-bottom:6px}
+section .sub{color:var(--mut);font-size:15px;margin-bottom:22px;max-width:620px}
+.mcards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.mcard{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px}
+.mcard .l{font-size:12px;color:var(--mut)}
+.mcard .v{font-weight:800;font-size:24px;margin-top:3px;color:var(--navy)}
+.v.bad{color:var(--red)}.v.good{color:var(--cobalt)}
+.chart-box{position:relative;width:100%;height:300px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.col h3{font-size:15px;margin-bottom:10px}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:7px 11px;border-radius:8px;margin:0 6px 6px 0}
+.tag.love{background:var(--papel-2);color:var(--azul)}
+.tag.hate{background:rgba(217,72,15,.10);color:var(--fuga)}
+.quote{background:var(--surface);border-left:3px solid var(--cobalt);border-radius:0 10px 10px 0;padding:12px 16px;margin-bottom:10px;font-size:14px;color:var(--tx)}
+.quote .src{display:block;margin-top:5px;font-size:12px;color:var(--mut)}
+table.opp{width:100%;border-collapse:collapse;font-size:14px}
+table.opp th,table.opp td{text-align:left;padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+table.opp th{font-weight:700;color:var(--navy);font-size:13px}
+.pill{font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap}
+.pill.h{background:rgba(217,72,15,.12);color:var(--fuga)}.pill.m{background:rgba(217,131,31,.12);color:var(--atencion)}
+.hyp{display:inline-block;font-size:11px;color:var(--amber-d);border:1px solid var(--amber);border-radius:6px;padding:1px 7px;margin-left:6px}
+.cta-final{background:var(--brand-blue);text-align:center}
+.cta-final h2{color:var(--blanco)}.cta-final p{color:#AFC0D8;max-width:430px;margin:0 auto 20px}
+footer{background:var(--brand-blue);color:#D5DEF4;font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:24px 20px}
+.js .reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+.js .reveal.in{opacity:1;transform:none}
+@media(max-width:820px){.mcards{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.nav-toggle{display:inline-flex}.nav-links{position:absolute;top:100%;left:0;right:0;background:var(--blanco);border-bottom:1px solid var(--line);flex-direction:column;align-items:stretch;gap:2px;padding:10px 16px 16px;display:none;box-shadow:0 10px 24px rgba(17,21,31,.08)}.nav-links.open{display:flex}.nav-links a.lnk{display:block;padding:12px 8px;font-size:16px;border-radius:8px}.nav-links a.btn{margin-top:8px;justify-content:center}.head h1{font-size:27px}section h2{font-size:22px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1!important;transform:none!important}}
+</style>
+</head>
+<body>
+<script>document.documentElement.classList.add('js')</script>
+<a href="#main" class="skip">Saltar al contenido</a>
+
+<header class="nav">
+  <div class="wrap">
+    <a href="index.html" class="brand" aria-label="MINA inicio"><span class="mk" aria-hidden="true"><img src="mina-symbol-negative.png" alt=""></span>MINA</a>
+    <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="navlinks"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    <nav class="nav-links" id="navlinks" aria-label="Principal">
+      <a href="index.html" class="lnk">Inicio</a>
+      <a href="entregables.html" class="lnk">Ejemplos</a>
+      <a href="nosotros.html" class="lnk">Nosotros</a>
+      <a href="index.html#servicios" class="lnk">Servicios</a>
+      <a href="#" class="btn btn--primary" data-cta>Análisis gratis</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<div class="head">
+  <div class="wrap">
+    <span class="badge">Ejemplo de entregable · datos públicos reales</span>
+    <h1>RADAR competitivo<br>Cafetería de especialidad en Av. Juárez</h1>
+    <p>Así se ve un sistema real de MINA. Analizamos una cafetería de especialidad líder en su zona, ubicada sobre Avenida Juárez, con <strong>1,609 reseñas</strong> y <strong>16 competidores</strong> — sin pedirle un solo dato interno al negocio. Todo viene de información pública.</p>
+  </div>
+</div>
+
+<section style="border-top:none">
+  <div class="wrap">
+    <div class="kicker reveal">Resumen ejecutivo</div>
+    <h2 class="reveal" style="margin:8px 0 18px">El lugar enamora. El servicio sangra el rating.</h2>
+    <div class="mcards reveal">
+      <div class="mcard"><div class="l">Rating</div><div class="v bad">4.2★</div></div>
+      <div class="mcard"><div class="l">Reseñas</div><div class="v">1,609</div></div>
+      <div class="mcard"><div class="l">Reseñas ≤3★</div><div class="v bad">21%</div></div>
+      <div class="mcard"><div class="l">Nota de servicio</div><div class="v bad">3.98</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker reveal">1 · Posición competitiva</div>
+    <h2 class="reveal">El rating más bajo del café de especialidad de Puebla.</h2>
+    <p class="sub reveal">Con el mayor número de reseñas del segmento — es decir, mucho tráfico, pero la peor satisfacción frente a sus pares.</p>
+    <div class="chart-box reveal"><canvas id="c1" role="img" aria-label="La cafetería analizada tiene 4.2 estrellas, el más bajo frente a competidores de 4.3 a 4.9">Caso Av. Juárez (<span class="cifra">4.2★</span>) queda último frente a competidores de 4.3 a <span class="cifra">4.9</span>★.</canvas></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker reveal">2 · Producto vs. servicio</div>
+    <h2 class="reveal">Aman lo que sirves; sufren cómo lo sirves.</h2>
+    <p class="sub reveal">La calificación de servicio (<span class="cifra">3.98</span>) arrastra al conjunto; comida y ambiente van por encima.</p>
+    <div class="two reveal">
+      <div class="chart-box"><canvas id="c2" role="img" aria-label="Servicio 3.98, Comida 4.38, Ambiente 4.45">Servicio (<span class="cifra">3.98</span>) es la dimensión más baja.</canvas></div>
+      <div class="chart-box"><canvas id="c3" role="img" aria-label="Distribución de estrellas: 1018 de cinco, 255 de cuatro, 143 de tres, 64 de dos, 129 de una">1 de cada 5 reseñas es de 3 estrellas o menos.</canvas></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker reveal">3 · El cuello de botella</div>
+    <h2 class="reveal">Las quejas de lentitud caen justo en los picos.</h2>
+    <p class="sub reveal">Ocupación por hora: el jueves satura al 99% al mediodía. Ahí es donde el servicio colapsa según las reseñas.</p>
+    <div class="chart-box reveal"><canvas id="c4" role="img" aria-label="El jueves satura al 99% al mediodía mientras el domingo se mantiene bajo">Jueves satura al mediodía; domingo queda flojo.</canvas></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker reveal">4 · Voz del cliente</div>
+    <h2 class="reveal">Qué aman y qué odian (de <span class="cifra">1,609</span> reseñas).</h2>
+    <div class="two reveal" style="margin-top:8px">
+      <div class="col">
+        <h3 style="color:var(--cobalt)">Lo que aman</h3>
+        <span class="tag love">El lugar / estética</span><span class="tag love">Café de especialidad</span><span class="tag love">Postres</span><span class="tag love">El concepto</span><span class="tag love">Ambiente para platicar</span>
+        <div class="quote" style="margin-top:12px">"El lugar muy bonito y el café delicioso, totalmente es café de especialidad."<span class="src">— Reseña Google, 4★</span></div>
+      </div>
+      <div class="col">
+        <h3 style="color:var(--red)">Lo que odian</h3>
+        <span class="tag hate">Servicio lento (30–60 min)</span><span class="tag hate">Meseros inatentos</span><span class="tag hate">Pedidos incompletos</span><span class="tag hate">Calidad en declive</span><span class="tag hate">Productos agotados</span>
+        <div class="quote" style="margin-top:12px;border-left-color:var(--red)">"El lugar es lindo pero la atención es terrible… pasaban los meseros a otras mesas y nunca se acercaron."<span class="src">— Reseña Google, 1★</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker reveal">5 · Hipótesis y oportunidades</div>
+    <h2 class="reveal">Lo que los datos sugieren.</h2>
+    <p class="sub reveal">El RADAR ve desde afuera. Estas son <strong>hipótesis a validar</strong> con la operación en un diagnóstico — no recetas a ciegas.</p>
+    <div class="reveal" style="overflow-x:auto;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:6px 16px">
+      <table class="opp">
+        <thead><tr><th>Hipótesis</th><th>Impacto</th><th>Potencial estimado</th></tr></thead>
+        <tbody>
+          <tr><td>El servicio en horas pico es el principal freno al rating <span class="hyp">a validar</span></td><td><span class="pill h">Alto</span></td><td class="mono">Rating 4.2 → 4.5</td></tr>
+          <tr><td>Hay venta perdida de postre / 2ª bebida por atención lenta <span class="hyp">a validar</span></td><td><span class="pill h">Alto</span></td><td class="mono">~<span class="cifra">$48K</span>/mes*</td></tr>
+          <tr><td>Inconsistencia de recetas y menú reduce la recompra <span class="hyp">a validar</span></td><td><span class="pill m">Medio</span></td><td class="mono">Por cuantificar</td></tr>
+          <tr><td>Solo Instagram, sin web ni menú online, limita captación <span class="hyp">a validar</span></td><td><span class="pill m">Medio</span></td><td class="mono">Por cuantificar</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:12px;color:var(--mut);margin-top:10px" class="reveal">*Estimación a partir de tráfico y ticket promedio; se confirma con los números reales del negocio en la fase de diagnóstico.</p>
+  </div>
+</section>
+
+<section class="cta-final">
+  <div class="wrap">
+    <h2 class="reveal" style="font-size:27px;margin-bottom:8px">Este es un RADAR. ¿Quieres el de tu negocio?</h2>
+    <p class="reveal">Te damos el primer hallazgo gratis, con datos reales de tu mercado.</p>
+    <a href="#" class="btn btn--primary reveal" data-cta>Solicita tu análisis gratis</a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="mono">MINA · Inteligencia Empresarial · Puebla</span>
+    <a href="index.html" style="color:#AFC0D8;text-decoration:none">← Volver al inicio</a>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const MINA = { whatsapp:"522213497111", msg:"Hola, quiero mi análisis gratis de MINA. Mi negocio es: " };
+document.querySelectorAll('[data-cta]').forEach(function(a){a.href="https://wa.me/"+MINA.whatsapp+"?text="+encodeURIComponent(MINA.msg);a.target="_blank";a.rel="noopener";});
+var reveals=document.querySelectorAll('.reveal');
+function revealAll(){reveals.forEach(function(el){el.classList.add('in');});}
+if('IntersectionObserver' in window){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08,rootMargin:'0px 0px -40px 0px'});
+  reveals.forEach(function(el){io.observe(el);}); setTimeout(revealAll,2500);
+}else{revealAll();}
+(function(){var t=document.querySelector('.nav-toggle'),nl=document.getElementById('navlinks');if(t&&nl){t.addEventListener('click',function(){var o=nl.classList.toggle('open');t.setAttribute('aria-expanded',o);});nl.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){nl.classList.remove('open');t.setAttribute('aria-expanded','false');});});}})();
+window.addEventListener('load',function(){
+  if(typeof Chart==='undefined')return;
+  var gx={color:'rgba(17,21,31,.08)'},tk={color:'#5B6675',font:{size:11}};
+  new Chart(document.getElementById('c1'),{type:'bar',
+    data:{labels:['Gospel','Tú y yo','Espíritu','Café Cultura','Clemente','Sierra Negra','Black Cat','Atelier','Caso Av. Juárez'],
+      datasets:[{data:[4.9,4.8,4.8,4.7,4.7,4.7,4.5,4.3,4.2],backgroundColor:['#2563EB','#2563EB','#2563EB','#2563EB','#2563EB','#2563EB','#6F9BE0','#6F9BE0','#F59E0B'],borderRadius:5}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.raw+' ★';}}}},scales:{x:{min:4,max:5,grid:gx,ticks:tk},y:{grid:{display:false},ticks:tk}}}});
+  new Chart(document.getElementById('c2'),{type:'bar',
+    data:{labels:['Servicio','Comida','Ambiente'],datasets:[{data:[3.98,4.38,4.45],backgroundColor:['#D9480F','#2563EB','#2563EB'],borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.raw+' / 5';}}}},scales:{y:{min:3.5,max:5,grid:gx,ticks:tk},x:{grid:{display:false},ticks:tk}}}});
+  new Chart(document.getElementById('c3'),{type:'doughnut',
+    data:{labels:['5★','4★','3★','2★','1★'],datasets:[{data:[1018,255,143,64,129],backgroundColor:['#2563EB','#6F9BE0','#F59E0B','#E07B3A','#D9480F'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'right',labels:{boxWidth:10,font:{size:11},color:'#5B6675'}}}}});
+  new Chart(document.getElementById('c4'),{type:'line',
+    data:{labels:['7','8','9','10','11','12','13','14','15','16','17','18','19','20'],
+      datasets:[{label:'Jueves',data:[10,22,40,59,78,92,99,95,93,93,89,82,69,48],borderColor:'#D9480F',backgroundColor:'rgba(192,57,43,.08)',fill:true,tension:.4,pointRadius:0,borderWidth:2},
+        {label:'Domingo',data:[null,8,12,18,24,29,35,42,49,55,56,51,39,null],borderColor:'#9FB0C8',borderDash:[5,4],fill:false,tension:.4,pointRadius:0,borderWidth:2}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11},color:'#5B6675'}},tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+c.raw+'%';}}}},scales:{y:{min:0,max:100,grid:gx,ticks:{color:'#5B6675',font:{size:11},callback:function(v){return v+'%';}}},x:{grid:{display:false},ticks:{color:'#5B6675',font:{size:11},callback:function(v){return this.getLabelForValue(v)+'h';}}}}}});
+});
+</script>
+</body>
+</html>
