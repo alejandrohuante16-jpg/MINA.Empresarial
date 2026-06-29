@@ -672,12 +672,13 @@ window.addEventListener('load',function(){
 </script>
 <script>
 (function(){
-var SM=0.12/12,SBM=0.09/12,SB=0.55,SR=60;
+var SM=0.12/12,SBM=0.09/12,SR=60;
+function getSB(m){return m>=7500?1.00:m>=5000?0.75:m>=3000?0.65:0.55;}
 function sfmt(n){if(n>=1e6)return'$'+(n/1e6).toFixed(2).replace(/\.?0+$/,'')+' M';if(n>=1e3)return'$'+(n/1e3).toFixed(0)+'K';return'$'+Math.round(n).toLocaleString('es-MX');}
 function sfmtFull(n){return'$'+Math.round(n).toLocaleString('es-MX');}
 function scalc(mensual,edad){
   var anos=SR-edad,meses=anos*12,labels=[],datos=[],saldo=0,bac=0,bb=0,tap=0;
-  for(var m=1;m<=meses;m++){saldo=saldo*(1+SM)+mensual;tap+=mensual;if(m===12){bb=tap*SB;bac=bb;}else if(m>12)bac*=(1+SBM);if(m%12===0){labels.push('Año '+(m/12));datos.push(Math.round(saldo+bac));}}
+  for(var m=1;m<=meses;m++){saldo=saldo*(1+SM)+mensual;tap+=mensual;if(m===12){bb=tap*getSB(mensual);bac=bb;}else if(m>12)bac*=(1+SBM);if(m%12===0){labels.push('Año '+(m/12));datos.push(Math.round(saldo+bac));}}
   return{labels:labels,datos:datos,tap:tap,final:datos[datos.length-1]||0,anos:anos};
 }
 var sc=null;
